@@ -5,24 +5,24 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
     const wh = new Webhook(process.env.SIGNING_SECRET);
-    const headerPayload = await headers()
+
+    // Use the request headers directly (req.headers) because headers() helper may not be available
     const svixHeader = {
-        "svix-id": headerPayload.get("svix-id"),
-        "svix-timestamp": headerPayload.get("svix-timestamp"),
-        "svix-signature": headerPayload.get("svix-signature"),
+        "svix-id": req.headers.get("svix-id"),
+        "svix-timestamp": req.headers.get("svix-timestamp"),
+        "svix-signature": req.headers.get("svix-signature"),
     };
 
-    //Get the payload and verify it
-    const payload = await req.json();
-    const body = JSON.stringify(payload);
-    const {data, type} = wh.verify(body, svixHeader);
+    // Read the raw body text — Svix requires verification against the exact raw payload
+    const body = await req.text();
+    const { data, type } = wh.verify(body, svixHeader);
 
     //prepare the user data to save in DB
 
     const userData = {
         _id: data.id,
-        email: data.email_addresses[0].email_address,
-        name: `${data.first_name} ${data.last_name}`,
+        email: data.email_addresses?.[0]?.email_address || undefined,
+        name: `${data.first_name || ''} ${data.last_name || ''}`.trim(),
         image: data.image_url,
     };
 
@@ -32,13 +32,13 @@ export async function POST(req) {
         case "user.created":
             await User.create(userData);
             break;
-            
+
         case "user.updated":
-            await User.findByIdAndUpdate(data._id, userData);
+            await User.findByIdAndUpdate(data.id, userData);
             break;
 
         case "user.deleted":
-            await User.findByIdAndDelete(data._id);
+            await User.findByIdAndDelete(data.id);
             break;
 
         default:
