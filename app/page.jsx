@@ -43,7 +43,7 @@ export default function Home() {
           {messages.length === 0 ?(
             <>
             <div className="flex items-center gap-3">
-              <Image src={assets.logo_icon} className="h-16" alt="" />
+              <Image src={assets.logo_icon} className="h-12 w-12" alt="" />
               <p className="text-2xl font-medium">Hi, I'm Cognitia AI.</p>
             </div>
             <p className="text-sm mt-2">How can I help you today?</p>

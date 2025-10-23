@@ -124,7 +124,7 @@ const Promtbox = ({ isLoading, setIsLoading }) => {
         <div className='flex items-center gap-2'>
           <p className='flex items-center gap-2 text-xs border border-gray-300/40 px-2 py-1 rounded-full cursor-pointer hover:bg-gray-500/20 transition'>
             <Image src={assets.deepthink_icon} className='h-5' alt=''/>
-            Deepthink (R1)
+            Gemini 2.5 flash
           </p>
 
           <p className='flex items-center gap-2 text-xs border border-gray-300/40 px-2 py-1 rounded-full cursor-pointer hover:bg-gray-500/20 transition'>
